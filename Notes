@@ -1,0 +1,53 @@
+- AWS credential
+
+AKIAZ5GEYMECHNPMSM4T = PeYHLnUoaU5R69Q55a+9SGOnVxLu1wrMSzsSKrNT
+
+- Delete kops cluster
+
+kops delete cluster --name kubevpro.tugu.live --yes --state=s3://vprofile-kops-state1994
+
+- Create k8s cluster using kops
+
+kops create cluster --name=kubevpro.tugu.live --state=s3://vprofile-kops-state1994 --zones=ap-southeast-1a,ap-southeast-1b --node-count=2 --node-size=t2.micro --master-size=t2.micro --dns-zone=kubevpro.tugu.live
+
+kops create cluster --name=kubevpro.tugu.live --state=s3://vprofile-kops-state1994 --zones=ap-southeast-1a,ap-southeast-1b --node-count=2 --node-size=t2.small --master-size=t2.medium --dns-zone=kubevpro.tugu.live --node-volume-size=8 --master-volume-size=8
+
+kops update cluster --name kubevpro.tugu.live --state=s3://vprofile-kops-state1994 --yes --admin
+
+kops validate cluster --name kubevpro.tugu.live --state=s3://vprofile-kops-state1994 --wait 10m
+
+- Create volume
+
+aws ec2 create-volume --availability-zone=ap-southeast-1a --size=3 --volume-type=gp2
+
+{
+
+    "AvailabilityZone": "ap-southeast-1a",
+
+    "CreateTime": "2023-06-22T05:22:19.000Z",
+
+    "Encrypted": false,
+
+    "Size": 3,
+
+    "SnapshotId": "",
+
+    "State": "creating",
+
+    "VolumeId": "vol-0f924682f0d74d29f",
+
+    "Iops": 100,
+
+    "Tags": [],
+
+    "VolumeType": "gp2",
+
+    "MultiAttachEnabled": false
+
+}
+
+- Create label
+
+kubectl label nodes i-0d63ad91b764dd17c zone=ap-southeast-1b
+
+kubectl label nodes i-0d63ad91b764dd17c zone=ap-southeast-1a
